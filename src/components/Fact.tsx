@@ -6,6 +6,9 @@ import { Card } from "@/components/ui/card";
 import ReactionForm from "./ReactionForm";
 import ReactionItem from "./ReactionItem";
 import { Fact as FactType, Reaction, getReactionsForFact } from "@/lib/mockData";
+import { MessageSquare, Heart, Bookmark, Share2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 
 interface FactProps {
   fact: FactType;
@@ -19,12 +22,26 @@ const Fact: React.FC<FactProps> = ({ fact, onOpenAuthModal }) => {
   const [reactions, setReactions] = useState<Reaction[]>(
     getReactionsForFact(fact.id)
   );
+  const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const { toast } = useToast();
 
   const handleAddReaction = (newReaction: Reaction) => {
     setReactions((prev) => [newReaction, ...prev]);
     setShowReactionForm(false);
     // Show reactions after adding a new one
     setShowReactions(true);
+    
+    // Navigate to Global Reactions page
+    toast({
+      title: "Reaction posted!",
+      description: "Your reaction is now visible in the Global Reactions feed.",
+      action: (
+        <Link to="/reactions" className="text-primary hover:underline">
+          View All Reactions
+        </Link>
+      ),
+    });
   };
 
   const handleReactClick = () => {
@@ -33,6 +50,45 @@ const Fact: React.FC<FactProps> = ({ fact, onOpenAuthModal }) => {
       return;
     }
     setShowReactionForm(true);
+  };
+
+  const handleLikeClick = () => {
+    if (!isAuthenticated) {
+      onOpenAuthModal();
+      return;
+    }
+    setIsLiked(!isLiked);
+    toast({
+      title: isLiked ? "Removed like" : "Fact liked!",
+      description: isLiked 
+        ? "You've unliked this fact" 
+        : "This fact will be shown more prominently in your feed",
+    });
+  };
+
+  const handleSaveClick = () => {
+    if (!isAuthenticated) {
+      onOpenAuthModal();
+      return;
+    }
+    setIsSaved(!isSaved);
+    toast({
+      title: isSaved ? "Removed from saved" : "Fact saved!",
+      description: isSaved 
+        ? "This fact has been removed from your saved items" 
+        : "You can access this fact later in your profile",
+    });
+  };
+
+  const handleShareClick = () => {
+    if (!isAuthenticated) {
+      onOpenAuthModal();
+      return;
+    }
+    toast({
+      title: "Share feature",
+      description: "The friends system will be implemented soon!",
+    });
   };
 
   const toggleShowReactions = () => {
@@ -68,27 +124,44 @@ const Fact: React.FC<FactProps> = ({ fact, onOpenAuthModal }) => {
 
           <div className="flex items-center justify-between pt-4">
             <div className="flex space-x-2">
+              {/* Comment button */}
               <Button
                 variant="outline"
-                onClick={handleReactClick}
-                className="gap-2"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-                React
-              </Button>
-              <Button
-                variant="ghost"
                 onClick={toggleShowReactions}
                 className="gap-2"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 6.1H3"></path>
-                  <path d="M21 12.1H3"></path>
-                  <path d="M15.1 18H3"></path>
-                </svg>
-                {reactions.length > 0 ? `Reactions (${reactions.length})` : "No Reactions"}
+                <MessageSquare size={18} />
+                {reactions.length > 0 ? `Comments (${reactions.length})` : "Comments"}
+              </Button>
+              
+              {/* Like button */}
+              <Button
+                variant={isLiked ? "default" : "outline"}
+                onClick={handleLikeClick}
+                className="gap-2"
+              >
+                <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
+                {isLiked ? "Liked" : "Like"}
+              </Button>
+              
+              {/* Save button */}
+              <Button
+                variant={isSaved ? "default" : "outline"}
+                onClick={handleSaveClick}
+                className="gap-2"
+              >
+                <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} />
+                {isSaved ? "Saved" : "Save"}
+              </Button>
+              
+              {/* Share button */}
+              <Button
+                variant="outline"
+                onClick={handleShareClick}
+                className="gap-2"
+              >
+                <Share2 size={18} />
+                Share
               </Button>
             </div>
             <span className="text-xs text-muted-foreground">
@@ -97,6 +170,20 @@ const Fact: React.FC<FactProps> = ({ fact, onOpenAuthModal }) => {
           </div>
         </div>
       </Card>
+
+      {/* Add reaction button */}
+      {!showReactionForm && (
+        <div className="mt-4">
+          <Button
+            variant="default"
+            onClick={handleReactClick}
+            className="gap-2 animate-pulse-light"
+          >
+            <MessageSquare size={18} />
+            React to this fact
+          </Button>
+        </div>
+      )}
 
       {/* Reaction Form */}
       {showReactionForm && (

@@ -30,6 +30,7 @@ export interface Comment {
   username: string;
   userAvatar?: string;
   text: string;
+  gifUrl?: string;
   createdAt: string;
   likes: number;
   isLiked?: boolean;

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import GifSelector from "./GifSelector";
 import { Reaction, Comment } from "@/lib/mockData";
 
 interface ReactionItemProps {
@@ -19,6 +20,8 @@ const ReactionItem: React.FC<ReactionItemProps> = ({ reaction }) => {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState<Comment[]>(reaction.comments);
   const [showComments, setShowComments] = useState(false);
+  const [showGifSelector, setShowGifSelector] = useState(false);
+  const [commentGifUrl, setCommentGifUrl] = useState<string | undefined>(undefined);
 
   const handleLike = () => {
     if (!isAuthenticated || !user) return;
@@ -31,9 +34,14 @@ const ReactionItem: React.FC<ReactionItemProps> = ({ reaction }) => {
     setIsLiked(!isLiked);
   };
 
+  const handleSelectGif = (url: string) => {
+    setCommentGifUrl(url);
+    setShowGifSelector(false);
+  };
+
   const handleSubmitComment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !commentText.trim()) return;
+    if (!user || (!commentText.trim() && !commentGifUrl)) return;
     
     const newComment: Comment = {
       id: `c-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -42,6 +50,7 @@ const ReactionItem: React.FC<ReactionItemProps> = ({ reaction }) => {
       username: user.username,
       userAvatar: user.avatar,
       text: commentText.trim(),
+      gifUrl: commentGifUrl,
       createdAt: new Date().toISOString(),
       likes: 0,
       isLiked: false,
@@ -49,6 +58,7 @@ const ReactionItem: React.FC<ReactionItemProps> = ({ reaction }) => {
     
     setComments((prevComments) => [...prevComments, newComment]);
     setCommentText("");
+    setCommentGifUrl(undefined);
     setShowCommentForm(false);
     setShowComments(true);
   };
@@ -164,6 +174,15 @@ const ReactionItem: React.FC<ReactionItemProps> = ({ reaction }) => {
                     </span>
                   </div>
                   <p className="text-sm">{comment.text}</p>
+                  {comment.gifUrl && (
+                    <div className="mt-1 rounded-lg overflow-hidden max-h-60 flex justify-start">
+                      <img
+                        src={comment.gifUrl}
+                        alt="GIF"
+                        className="max-w-full object-contain max-h-60"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -172,33 +191,92 @@ const ReactionItem: React.FC<ReactionItemProps> = ({ reaction }) => {
       )}
 
       {/* Comment form */}
-      {showCommentForm && (
+      {showCommentForm && !showGifSelector && (
         <div className="px-4 py-3 bg-secondary/50">
-          <form onSubmit={handleSubmitComment} className="pl-8">
+          <form onSubmit={handleSubmitComment} className="pl-8 space-y-3">
             <Textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Write a reply..."
-              className="min-h-[60px] mb-2"
+              className="min-h-[60px]"
             />
-            <div className="flex justify-end space-x-2">
+            
+            {commentGifUrl && (
+              <div className="relative">
+                <img 
+                  src={commentGifUrl} 
+                  alt="Selected GIF" 
+                  className="rounded-md max-h-[100px] object-contain"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setCommentGifUrl(undefined)}
+                  className="absolute top-1 right-1 rounded-full bg-background/80 hover:bg-background"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                  </svg>
+                </Button>
+              </div>
+            )}
+            
+            <div className="flex justify-between items-center">
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                onClick={() => setShowCommentForm(false)}
+                onClick={() => setShowGifSelector(true)}
+                className="gap-2"
               >
-                Cancel
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="20" height="14" x="2" y="5" rx="2"></rect>
+                  <path d="M14 9h2"></path>
+                  <path d="M14 13h2"></path>
+                  <path d="M9 9h1"></path>
+                  <path d="M6 15h12"></path>
+                  <path d="M9 13h1"></path>
+                </svg>
+                GIF
               </Button>
-              <Button
-                type="submit"
-                size="sm"
-                disabled={!commentText.trim()}
-              >
-                Reply
-              </Button>
+              
+              <div className="space-x-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setShowCommentForm(false);
+                    setCommentText("");
+                    setCommentGifUrl(undefined);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={!commentText.trim() && !commentGifUrl}
+                >
+                  Reply
+                </Button>
+              </div>
             </div>
           </form>
+        </div>
+      )}
+      
+      {/* GIF selector */}
+      {showCommentForm && showGifSelector && (
+        <div className="px-4 py-3 bg-secondary/50">
+          <div className="pl-8">
+            <GifSelector
+              onSelectGif={handleSelectGif}
+              onCancel={() => setShowGifSelector(false)}
+            />
+          </div>
         </div>
       )}
     </Card>

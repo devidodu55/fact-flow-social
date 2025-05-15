@@ -99,91 +99,109 @@ const Fact: React.FC<FactProps> = ({ fact, onOpenAuthModal }) => {
   };
 
   return (
-    <div className="snap-item relative w-full h-full flex flex-col items-center justify-center px-4 py-16">
-      <Card className="relative w-full max-w-2xl p-6 md:p-8 overflow-hidden bg-opacity-90 backdrop-blur-sm">
-        {fact.imageUrl && (
-          <div className="absolute inset-0 z-0 opacity-10">
-            <img
-              src={fact.imageUrl}
-              alt={fact.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
-        <div className="relative z-10 space-y-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            {fact.title}
-          </h2>
-          <p className="text-md md:text-lg text-foreground/80">{fact.content}</p>
-
-          {fact.source && (
-            <p className="text-sm text-muted-foreground">
-              Source: {fact.source}
-            </p>
-          )}
-
-          <div className="flex items-center justify-between pt-4">
-            <div className="flex space-x-2">
-              {/* Comment button */}
-              <Button
-                variant="outline"
-                onClick={toggleShowReactions}
-                className="gap-2"
-              >
-                <MessageSquare size={18} />
-                {reactions.length > 0 ? `Comments (${reactions.length})` : "Comments"}
-              </Button>
-              
-              {/* Like button */}
-              <Button
-                variant={isLiked ? "default" : "outline"}
-                onClick={handleLikeClick}
-                className="gap-2"
-              >
-                <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
-                {isLiked ? "Liked" : "Like"}
-              </Button>
-              
-              {/* Save button */}
-              <Button
-                variant={isSaved ? "default" : "outline"}
-                onClick={handleSaveClick}
-                className="gap-2"
-              >
-                <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} />
-                {isSaved ? "Saved" : "Save"}
-              </Button>
-              
-              {/* Share button */}
-              <Button
-                variant="outline"
-                onClick={handleShareClick}
-                className="gap-2"
-              >
-                <Share2 size={18} />
-                Share
-              </Button>
+    <div className="snap-item relative w-full h-full flex flex-col items-center justify-center">
+      <div className="w-full max-w-md h-[80vh] flex items-stretch relative">
+        {/* Main content area - TikTok style vertical card */}
+        <Card className="flex-grow relative overflow-hidden bg-opacity-90 backdrop-blur-sm flex flex-col">
+          {fact.imageUrl && (
+            <div className="absolute inset-0 z-0 opacity-10">
+              <img
+                src={fact.imageUrl}
+                alt={fact.title}
+                className="w-full h-full object-cover"
+              />
             </div>
-            <span className="text-xs text-muted-foreground">
-              {new Date(fact.createdAt).toLocaleDateString()}
-            </span>
+          )}
+          <div className="relative z-10 p-6 flex flex-col h-full justify-between">
+            <div className="space-y-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                {fact.title}
+              </h2>
+              <p className="text-md md:text-lg text-foreground/80">{fact.content}</p>
+
+              {fact.source && (
+                <p className="text-sm text-muted-foreground">
+                  Source: {fact.source}
+                </p>
+              )}
+            </div>
+            
+            <div className="mt-auto pt-4">
+              <span className="text-xs text-muted-foreground">
+                {new Date(fact.createdAt).toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+        </Card>
+        
+        {/* Side buttons - Similar to TikTok */}
+        <div className="flex flex-col justify-center items-center gap-5 pl-4">
+          {/* Comment button */}
+          <div className="flex flex-col items-center">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={toggleShowReactions}
+              className="rounded-full h-12 w-12 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+            >
+              <MessageSquare size={24} />
+            </Button>
+            <span className="text-xs mt-1">{reactions.length}</span>
+          </div>
+          
+          {/* Like button */}
+          <div className="flex flex-col items-center">
+            <Button
+              variant={isLiked ? "default" : "outline"}
+              size="icon" 
+              onClick={handleLikeClick}
+              className="rounded-full h-12 w-12 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+            >
+              <Heart size={24} fill={isLiked ? "currentColor" : "none"} />
+            </Button>
+            <span className="text-xs mt-1">Like</span>
+          </div>
+          
+          {/* Save button */}
+          <div className="flex flex-col items-center">
+            <Button
+              variant={isSaved ? "default" : "outline"}
+              size="icon"
+              onClick={handleSaveClick}
+              className="rounded-full h-12 w-12 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+            >
+              <Bookmark size={24} fill={isSaved ? "currentColor" : "none"} />
+            </Button>
+            <span className="text-xs mt-1">Save</span>
+          </div>
+          
+          {/* Share button */}
+          <div className="flex flex-col items-center">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleShareClick}
+              className="rounded-full h-12 w-12 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+            >
+              <Share2 size={24} />
+            </Button>
+            <span className="text-xs mt-1">Share</span>
+          </div>
+          
+          {/* React button */}
+          <div className="flex flex-col items-center mt-4">
+            <Button
+              variant="default"
+              size="icon"
+              onClick={handleReactClick}
+              className="rounded-full h-12 w-12 flex items-center justify-center animate-pulse-light"
+            >
+              <MessageSquare size={24} />
+            </Button>
+            <span className="text-xs mt-1">React</span>
           </div>
         </div>
-      </Card>
-
-      {/* Add reaction button */}
-      {!showReactionForm && (
-        <div className="mt-4">
-          <Button
-            variant="default"
-            onClick={handleReactClick}
-            className="gap-2 animate-pulse-light"
-          >
-            <MessageSquare size={18} />
-            React to this fact
-          </Button>
-        </div>
-      )}
+      </div>
 
       {/* Reaction Form */}
       {showReactionForm && (

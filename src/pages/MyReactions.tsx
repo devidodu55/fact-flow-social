@@ -19,38 +19,40 @@ const MyReactions = () => {
     : [];
 
   return (
-    <div className="min-h-screen bg-background pt-16 pb-8">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center mb-6 space-x-2 sticky top-16 z-10 bg-background/80 backdrop-blur-sm py-2">
-          <Link to="/" className={navigationMenuTriggerStyle()}>
-            Home
-          </Link>
-          <Link to="/reactions" className={navigationMenuTriggerStyle()}>
-            Feed
-          </Link>
-          <Link to="/my-reactions" className={navigationMenuTriggerStyle({ className: "bg-accent/50" })}>
-            My Reactions
-          </Link>
-          <Link to="/profile" className={navigationMenuTriggerStyle()}>
-            Profile
-          </Link>
+    <div className="min-h-screen bg-background pt-20 pb-8">
+      <div className="container mx-auto px-4 py-2">
+        <div className="sticky top-16 z-10 bg-background/80 backdrop-blur-sm py-2 mb-6">
+          <div className="flex items-center space-x-2">
+            <Link to="/" className={navigationMenuTriggerStyle()}>
+              Accueil
+            </Link>
+            <Link to="/reactions" className={navigationMenuTriggerStyle()}>
+              Feed
+            </Link>
+            <Link to="/my-reactions" className={navigationMenuTriggerStyle({ className: "bg-accent/50" })}>
+              Mes Réactions
+            </Link>
+            <Link to="/profile" className={navigationMenuTriggerStyle()}>
+              Profil
+            </Link>
+          </div>
         </div>
         
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">My Reactions</h1>
+          <h1 className="text-3xl font-bold">Mes Réactions</h1>
           {userReactions.length > 0 && (
             <Button 
               size="sm"
               variant="outline"
-              onClick={() => toast.success("Coming soon: Bulk actions for your reactions!")}
+              onClick={() => toast.success("Bientôt: Actions groupées pour vos réactions!")}
             >
-              Manage
+              Gérer
             </Button>
           )}
         </div>
         
-        <ScrollArea className="h-[calc(100vh-240px)]">
-          <div className="space-y-4 pb-6">
+        <ScrollArea className="h-[calc(100vh-200px)]">
+          <div className="space-y-4 pb-6 max-w-2xl mx-auto">
             {userReactions.length > 0 ? (
               userReactions.map((reaction) => (
                 <Card key={reaction.id} className="mb-4 hover:shadow-md transition-all">
@@ -66,10 +68,10 @@ const MyReactions = () => {
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                   </svg>
                 </div>
-                <p className="text-muted-foreground mb-3">You haven't posted any reactions yet.</p>
+                <p className="text-muted-foreground mb-3">Vous n'avez pas encore publié de réactions.</p>
                 <Link to="/" className="text-primary hover:underline block mt-2 font-medium">
                   <Button variant="outline" className="animate-bounce">
-                    Go react to some facts!
+                    Réagissez à des faits maintenant !
                   </Button>
                 </Link>
               </div>

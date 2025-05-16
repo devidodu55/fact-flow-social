@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import GifSelector from "./GifSelector";
 import { Reaction } from "@/lib/mockData";
+import { Image, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 interface ReactionFormProps {
   factId: string;
@@ -22,6 +24,7 @@ const ReactionForm: React.FC<ReactionFormProps> = ({ factId, onSubmit, onCancel 
   const handleSelectGif = (url: string) => {
     setGifUrl(url);
     setShowGifSelector(false);
+    toast.success("GIF sélectionné avec succès!");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -49,6 +52,7 @@ const ReactionForm: React.FC<ReactionFormProps> = ({ factId, onSubmit, onCancel 
     setTimeout(() => {
       onSubmit(newReaction);
       setIsSubmitting(false);
+      toast.success("Réaction publiée avec succès!");
     }, 500);
   };
 
@@ -63,17 +67,17 @@ const ReactionForm: React.FC<ReactionFormProps> = ({ factId, onSubmit, onCancel 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Textarea
-              placeholder="Write your reaction..."
+              placeholder="Écrivez votre réaction..."
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="resize-none min-h-[100px]"
+              className="resize-none min-h-[100px] focus:border-primary"
             />
             
             {gifUrl && (
               <div className="relative">
                 <img 
                   src={gifUrl} 
-                  alt="Selected GIF" 
+                  alt="GIF sélectionné" 
                   className="rounded-md max-h-[150px] object-contain"
                 />
                 <Button
@@ -93,23 +97,29 @@ const ReactionForm: React.FC<ReactionFormProps> = ({ factId, onSubmit, onCancel 
           </div>
           
           <div className="flex justify-between">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowGifSelector(true)}
-              className="gap-2"
-              disabled={isSubmitting}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="20" height="14" x="2" y="5" rx="2"></rect>
-                <path d="M14 9h2"></path>
-                <path d="M14 13h2"></path>
-                <path d="M9 9h1"></path>
-                <path d="M6 15h12"></path>
-                <path d="M9 13h1"></path>
-              </svg>
-              Add GIF
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowGifSelector(true)}
+                className="gap-2"
+                disabled={isSubmitting}
+              >
+                <Image size={18} />
+                GIF
+              </Button>
+              
+              <Button
+                type="button"
+                variant="outline"
+                className="gap-2"
+                onClick={() => toast.info("Fonctionnalité à venir!")}
+                disabled={isSubmitting}
+              >
+                <Sparkles size={18} />
+                Effets
+              </Button>
+            </div>
             
             <div className="space-x-2">
               <Button
@@ -118,13 +128,13 @@ const ReactionForm: React.FC<ReactionFormProps> = ({ factId, onSubmit, onCancel 
                 onClick={onCancel}
                 disabled={isSubmitting}
               >
-                Cancel
+                Annuler
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting || (!text.trim() && !gifUrl)}
               >
-                {isSubmitting ? "Posting..." : "Post Reaction"}
+                {isSubmitting ? "Publication..." : "Publier"}
               </Button>
             </div>
           </div>

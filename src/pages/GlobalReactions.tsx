@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import ReactionItem from "@/components/ReactionItem";
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { Link } from "react-router-dom";
-import { ArrowDown, ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowDown, Sparkles, Flame, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -14,11 +14,12 @@ const GlobalReactions = () => {
   // State for sorting and filtering
   const [sortOrder, setSortOrder] = useState<"newest" | "popular">("newest");
   const [showConfetti, setShowConfetti] = useState(false);
+  const [likedFacts, setLikedFacts] = useState<string[]>([]);
   
   // Helper function to find the fact title for a reaction
   const getFactTitle = (factId: string) => {
     const fact = facts.find(f => f.id === factId);
-    return fact ? fact.title : "Unknown Fact";
+    return fact ? fact.title : "Fait inconnu";
   };
 
   // Sort reactions based on current sort order
@@ -33,13 +34,28 @@ const GlobalReactions = () => {
 
   const handleSortChange = (order: "newest" | "popular") => {
     setSortOrder(order);
-    toast.success(`Sorting by ${order === "newest" ? "most recent" : "most popular"} reactions`);
+    toast.success(`Tri par ${order === "newest" ? "réactions les plus récentes" : "réactions les plus populaires"}`);
   };
   
   const triggerFunMode = () => {
     setShowConfetti(true);
-    toast.success("🎉 Fun mode activated! 🎉");
+    toast("🎉 Mode festif activé! 🎉", {
+      description: "L'app est maintenant plus divertissante!",
+      action: {
+        label: "Super!",
+        onClick: () => console.log("Clicked")
+      },
+    });
     setTimeout(() => setShowConfetti(false), 3000);
+  };
+
+  const toggleLikeFact = (factId: string) => {
+    if (likedFacts.includes(factId)) {
+      setLikedFacts(likedFacts.filter(id => id !== factId));
+    } else {
+      setLikedFacts([...likedFacts, factId]);
+      toast.success("Merci pour votre like! 💖");
+    }
   };
 
   return (
@@ -61,7 +77,7 @@ const GlobalReactions = () => {
               <NavigationMenuItem>
                 <Link to="/">
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Home
+                    Accueil
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
@@ -77,14 +93,14 @@ const GlobalReactions = () => {
               <NavigationMenuItem>
                 <Link to="/my-reactions">
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    My Reactions
+                    Mes Réactions
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <Link to="/profile">
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Profile
+                    Profil
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
@@ -101,17 +117,17 @@ const GlobalReactions = () => {
               size="sm" 
               variant={sortOrder === "newest" ? "default" : "outline"}
               onClick={() => handleSortChange("newest")}
-              className="rounded-full"
+              className="rounded-full gap-1"
             >
-              <ArrowDown className="mr-1" size={14} /> Newest
+              <ArrowDown size={14} /> Récents
             </Button>
             <Button 
               size="sm" 
               variant={sortOrder === "popular" ? "default" : "outline"}
               onClick={() => handleSortChange("popular")}
-              className="rounded-full"
+              className="rounded-full gap-1"
             >
-              <Sparkles className="mr-1" size={14} /> Popular
+              <Flame size={14} /> Populaires
             </Button>
             <Button
               size="sm"
@@ -129,11 +145,22 @@ const GlobalReactions = () => {
             {sortedReactions.map((reaction) => (
               <Card key={reaction.id} className="mb-4 overflow-hidden border-border hover:bg-muted/20 hover:border-primary/30 transition-colors">
                 <CardContent className="pt-4">
-                  <div className="mb-3 pb-2 border-b flex items-center text-sm text-muted-foreground">
-                    <ArrowRight className="mr-1" size={14} />
-                    <Link to="/" className="text-primary hover:underline">
+                  <div className="mb-3 pb-2 border-b flex items-center justify-between text-sm">
+                    <Link to="/" className="text-primary hover:underline flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                        <path d="m15 10-4 4" />
+                        <path d="m15 14-4-4" />
+                      </svg>
                       <strong>{getFactTitle(reaction.factId)}</strong>
                     </Link>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className={`h-8 w-8 ${likedFacts.includes(reaction.factId) ? "text-red-500" : ""}`}
+                      onClick={() => toggleLikeFact(reaction.factId)}
+                    >
+                      <Heart size={16} fill={likedFacts.includes(reaction.factId) ? "currentColor" : "none"} />
+                    </Button>
                   </div>
                   <ReactionItem reaction={reaction} />
                 </CardContent>

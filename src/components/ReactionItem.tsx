@@ -38,16 +38,16 @@ const ReactionItem: React.FC<ReactionItemProps> = ({ reaction }) => {
     <div className="space-y-3">
       <div className="flex items-start gap-3">
         <Avatar className="h-10 w-10">
-          <AvatarImage src={reaction.userAvatar} alt={reaction.userName} />
+          <AvatarImage src={reaction.userAvatar} alt={reaction.username} />
           <AvatarFallback>
-            {reaction.userName.substring(0, 2).toUpperCase()}
+            {reaction.username && reaction.username.substring(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         
         <div className="flex-1 space-y-1">
           <div className="flex items-center justify-between">
             <div>
-              <span className="font-medium">{reaction.userName}</span>
+              <span className="font-medium">{reaction.username}</span>
               <span className="text-muted-foreground text-xs ml-2">
                 {formatDistanceToNow(new Date(reaction.createdAt), { addSuffix: true })}
               </span>
@@ -87,7 +87,9 @@ const ReactionItem: React.FC<ReactionItemProps> = ({ reaction }) => {
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
               </svg>
-              {reaction.comments > 0 && <span>{reaction.comments}</span>}
+              {reaction.comments && reaction.comments.length > 0 && (
+                <span>{reaction.comments.length}</span>
+              )}
             </Button>
             
             <Button

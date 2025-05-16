@@ -1,7 +1,5 @@
 
 import React, { useState, useRef, useEffect } from "react";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import Fact from "@/components/Fact";
 import AuthModal from "@/components/AuthModal";
@@ -39,39 +37,35 @@ const Index = () => {
   }, []);
 
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <div className="min-h-screen bg-background">
-          <Navbar onOpenAuthModal={() => setIsAuthModalOpen(true)} />
-          
-          <div className="fixed bottom-6 right-6 z-50">
-            <Link to="/reactions">
-              <Button variant="default" size="lg" className="rounded-full shadow-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-                Global Reactions
-              </Button>
-            </Link>
-          </div>
-          
-          <div ref={containerRef} className="snap-container no-scrollbar">
-            {facts.map((fact) => (
-              <Fact 
-                key={fact.id} 
-                fact={fact} 
-                onOpenAuthModal={() => setIsAuthModalOpen(true)}
-              />
-            ))}
-          </div>
-          
-          <AuthModal 
-            isOpen={isAuthModalOpen} 
-            onClose={() => setIsAuthModalOpen(false)} 
+    <div className="min-h-screen bg-background">
+      <Navbar onOpenAuthModal={() => setIsAuthModalOpen(true)} />
+      
+      <div className="fixed bottom-6 right-6 z-50">
+        <Link to="/reactions">
+          <Button variant="default" size="lg" className="rounded-full shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Global Reactions
+          </Button>
+        </Link>
+      </div>
+      
+      <div ref={containerRef} className="snap-container no-scrollbar">
+        {facts.map((fact) => (
+          <Fact 
+            key={fact.id} 
+            fact={fact} 
+            onOpenAuthModal={() => setIsAuthModalOpen(true)}
           />
-        </div>
-      </AuthProvider>
-    </ThemeProvider>
+        ))}
+      </div>
+      
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
+    </div>
   );
 };
 

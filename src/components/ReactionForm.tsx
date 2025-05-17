@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import GifSelector from "./GifSelector";
 import { Reaction } from "@/lib/mockData";
-import { Image, Sparkles } from "lucide-react";
+import { Image, Sparkles, Smile } from "lucide-react";
 import { toast } from "sonner";
+import "../animations.css";
 
 interface ReactionFormProps {
   factId: string;
@@ -52,7 +53,15 @@ const ReactionForm: React.FC<ReactionFormProps> = ({ factId, onSubmit, onCancel 
     setTimeout(() => {
       onSubmit(newReaction);
       setIsSubmitting(false);
-      toast.success("Réaction publiée avec succès!");
+      toast.success("Réaction publiée avec succès!", {
+        description: "Votre commentaire est maintenant visible",
+        action: {
+          label: "Voir",
+          onClick: () => {
+            // Action when user clicks "View"
+          }
+        }
+      });
     }, 500);
   };
 
@@ -70,11 +79,11 @@ const ReactionForm: React.FC<ReactionFormProps> = ({ factId, onSubmit, onCancel 
               placeholder="Écrivez votre réaction..."
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="resize-none min-h-[100px] focus:border-primary"
+              className="resize-none min-h-[100px] focus:border-primary animate-fade-in"
             />
             
             {gifUrl && (
-              <div className="relative">
+              <div className="relative animate-scale-in">
                 <img 
                   src={gifUrl} 
                   alt="GIF sélectionné" 
@@ -102,7 +111,7 @@ const ReactionForm: React.FC<ReactionFormProps> = ({ factId, onSubmit, onCancel 
                 type="button"
                 variant="outline"
                 onClick={() => setShowGifSelector(true)}
-                className="gap-2"
+                className="gap-2 hover:bg-primary/10"
                 disabled={isSubmitting}
               >
                 <Image size={18} />
@@ -112,7 +121,18 @@ const ReactionForm: React.FC<ReactionFormProps> = ({ factId, onSubmit, onCancel 
               <Button
                 type="button"
                 variant="outline"
-                className="gap-2"
+                className="gap-2 hover:bg-primary/10"
+                onClick={() => toast.info("Fonctionnalité à venir!")}
+                disabled={isSubmitting}
+              >
+                <Smile size={18} />
+                Emoji
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="gap-2 hover:bg-primary/10"
                 onClick={() => toast.info("Fonctionnalité à venir!")}
                 disabled={isSubmitting}
               >
@@ -133,6 +153,7 @@ const ReactionForm: React.FC<ReactionFormProps> = ({ factId, onSubmit, onCancel 
               <Button
                 type="submit"
                 disabled={isSubmitting || (!text.trim() && !gifUrl)}
+                className={`${(!text.trim() && !gifUrl) ? '' : 'animate-pulse-light'}`}
               >
                 {isSubmitting ? "Publication..." : "Publier"}
               </Button>

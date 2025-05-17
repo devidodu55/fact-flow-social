@@ -5,7 +5,7 @@ export type User = {
   id: string;
   username: string;
   email?: string;
-  isAnonymous: boolean;
+  isAdmin: boolean;
   avatar?: string;
 };
 
@@ -13,8 +13,7 @@ interface AuthContextProps {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (username: string, email?: string) => void;
-  loginAnonymously: () => void;
+  login: (username: string, email: string, password: string) => void;
   logout: () => void;
 }
 
@@ -33,26 +32,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   }, []);
 
-  const login = (username: string, email?: string) => {
+  const login = (username: string, email: string, password: string) => {
+    // Check if it's the admin account
+    const isAdmin = email.toLowerCase() === "admin";
+    
     const newUser: User = {
       id: Date.now().toString(),
       username,
       email,
-      isAnonymous: false,
+      isAdmin,
       avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
-    };
-    
-    setUser(newUser);
-    localStorage.setItem("user", JSON.stringify(newUser));
-  };
-
-  const loginAnonymously = () => {
-    const anonymousId = `anonymous-${Date.now().toString(36)}`;
-    const newUser: User = {
-      id: Date.now().toString(),
-      username: anonymousId,
-      isAnonymous: true,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${anonymousId}`,
     };
     
     setUser(newUser);
@@ -71,7 +60,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user,
         isLoading,
         login,
-        loginAnonymously,
         logout,
       }}
     >

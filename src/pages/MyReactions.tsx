@@ -9,6 +9,7 @@ import ReactionItem from "@/components/ReactionItem";
 import { reactions } from "@/lib/mockData";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Settings } from "lucide-react";
 
 const MyReactions = () => {
   const { user } = useAuth();
@@ -21,24 +22,32 @@ const MyReactions = () => {
   return (
     <div className="min-h-screen bg-background pt-20 pb-8">
       <div className="container mx-auto px-4 py-2">
-        <div className="sticky top-16 z-10 bg-background/80 backdrop-blur-sm py-2 mb-6">
-          <div className="flex items-center space-x-2">
-            <Link to="/" className={navigationMenuTriggerStyle()}>
-              Accueil
-            </Link>
-            <Link to="/reactions" className={navigationMenuTriggerStyle()}>
-              Feed
-            </Link>
-            <Link to="/my-reactions" className={navigationMenuTriggerStyle({ className: "bg-accent/50" })}>
-              Mes Réactions
-            </Link>
-            <Link to="/profile" className={navigationMenuTriggerStyle()}>
-              Profil
+        <div className="fixed top-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-sm py-4 border-b">
+          <div className="container mx-auto px-4 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Link to="/" className={navigationMenuTriggerStyle()}>
+                Accueil
+              </Link>
+              <Link to="/reactions" className={navigationMenuTriggerStyle()}>
+                Feed
+              </Link>
+              <Link to="/my-reactions" className={navigationMenuTriggerStyle({ className: "bg-accent/50" })}>
+                Mes Réactions
+              </Link>
+              <Link to="/profile" className={navigationMenuTriggerStyle()}>
+                Profil
+              </Link>
+            </div>
+            
+            <Link to="/settings">
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Settings size={20} />
+              </Button>
             </Link>
           </div>
         </div>
         
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 mt-12">
           <h1 className="text-3xl font-bold">Mes Réactions</h1>
           {userReactions.length > 0 && (
             <Button 

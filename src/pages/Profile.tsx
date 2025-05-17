@@ -63,7 +63,8 @@ const Profile = () => {
   
   const handleSaveChanges = () => {
     if (user && username.trim()) {
-      login(username.trim(), user.email);
+      // Fix: Pass a placeholder password as the third argument
+      login(username.trim(), user.email || "", "");
       toast.success("Profil mis à jour avec succès! ✨");
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);

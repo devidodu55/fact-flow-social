@@ -13,7 +13,7 @@ interface AuthContextProps {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (username: string, email: string, password: string) => void;
+  login: (username: string, email: string, password?: string) => void;
   logout: () => void;
 }
 
@@ -32,7 +32,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   }, []);
 
-  const login = (username: string, email: string, password: string) => {
+  const login = (username: string, email: string, password?: string) => {
     // Check if it's the admin account
     const isAdmin = email.toLowerCase() === "admin";
     
